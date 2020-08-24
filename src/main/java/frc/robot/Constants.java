@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.util.Units;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants.  This class should not be used for any other purpose.  All constants should be
@@ -17,6 +19,10 @@ package frc.robot;
  */
 public final class Constants {
 
+    public static final class JoystickButtons {
+        public static final int kRESET_DRIVE = 8;
+    }
+
     public static final class DriveConstants {
         public static final int kLEFT_MOTOR_1_PORT = 2;
         public static final int kLEFT_MOTOR_2_PORT = 3;
@@ -25,5 +31,18 @@ public final class Constants {
 
         public static final double kRAMP_RATE = 1.0;
         public static final int kCURRENT_LIMIT = 40;
+
+        public static final boolean kLEFT_ENCODER_REVERSED = false;
+        public static final boolean kRIGHT_ENCODER_REVERS$ED = true;
+
+        public static final double kGEARBOX_REDUCTION = (50.0/12.0) * (60.0/14.0);
+        public static final double kTIRE_SIZE_IN = 7.9;
+        public static final double kTIRE_SIZE_M = Units.inchesToMeters(kTIRE_SIZE_IN);
+        public static final int kPULSE_PER_ROTATION = 1;
+        //public static final int kENCODER_CPR = 1024;
+        public static final double kENCODER_DISTANCE_PER_PULSE_M = ((double) kPULSE_PER_ROTATION / kGEARBOX_REDUCTION) * (kTIRE_SIZE_M * Math.PI);
+        
+        public static final double kTRACK_WIDTH = 0.64;
+
     }
 }

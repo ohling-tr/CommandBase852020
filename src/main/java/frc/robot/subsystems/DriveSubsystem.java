@@ -13,9 +13,13 @@ import frc.robot.Constants.DriveConstants;
 
 import java.net.CacheRequest;
 
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -31,11 +35,17 @@ public class DriveSubsystem extends SubsystemBase {
   private SpeedControllerGroup m_rightControlGroup;
   private DifferentialDrive m_diffDrive;
 
+  private CANEncoder m_leftEncoder1;
+  private CANEncoder m_rightEncoder1;
+
+  private ADXRS450_Gyro m_gyro;
+
   public DriveSubsystem() {
-    m_leftController1 = new CANSparkMax(DriveConstants.kLEFT_MOTOR_1_PORT, CANSparkMaxLowLevel.MotorType.kBrushless);
-    m_leftController2 = new CANSparkMax(DriveConstants.kLEFT_MOTOR_2_PORT, CANSparkMaxLowLevel.MotorType.kBrushless);
-    m_rightController1 = new CANSparkMax(DriveConstants.kRIGHT_MOTOR_1_PORT, CANSparkMaxLowLevel.MotorType.kBrushless);
-    m_rightController2 = new CANSparkMax(DriveConstants.kRIGHT_MOTOR_2_PORT, CANSparkMaxLowLevel.MotorType.kBrushless);
+
+    m_leftController1 = new CANSparkMax(DriveConstants.kLEFT_MOTOR_1_PORT, MotorType.kBrushless);
+    m_leftController2 = new CANSparkMax(DriveConstants.kLEFT_MOTOR_2_PORT, MotorType.kBrushless);
+    m_rightController1 = new CANSparkMax(DriveConstants.kRIGHT_MOTOR_1_PORT, MotorType.kBrushless);
+    m_rightController2 = new CANSparkMax(DriveConstants.kRIGHT_MOTOR_2_PORT, MotorType.kBrushless);
 
     m_leftController1.restoreFactoryDefaults();
     m_leftController2.restoreFactoryDefaults();
@@ -60,15 +70,52 @@ public class DriveSubsystem extends SubsystemBase {
     m_leftControlGroup = new SpeedControllerGroup(m_leftController1, m_leftController2);
     m_rightControlGroup = new SpeedControllerGroup(m_rightController1, m_rightController2);
     m_diffDrive = new DifferentialDrive(m_leftControlGroup, m_rightControlGroup);
+
+    m_leftEncoder1 = m_leftController1.getEncoder();
+    //m_leftEncoder1.setPositionConversionFactor(DriveConstants.kENCODER_DISTANCE_PER_PULSE_M);
+    m_rightEncoder1 = m_rightController1.getEncoder();
+    //m_rightEncoder1.setPositionConversionFactor(DriveConstants.kENCODER_DISTANCE_PER_PULSE_M);
+    resetEncoders();
+    
+    m_gyro = new ADXRS450_Gyro();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Gyro....:", getAngle());
+    SmartDashboard.putNumber("LeftEncdr:", getLeftEncoder());
+    SmartDashboard.putNumber("RightEncdr:", getRightEncoder());
   }
 
-  public void arcadeDrive(double velocity, double heading){
-    double dDriveInvert = -1;
+  public void arcadeDrive(final double velocity, final double heading) {
+    final double dDriveInvert = -1;
     m_diffDrive.arcadeDrive(velocity * dDriveInvert, heading);
+  }
+
+  private double getAngle() {
+    return m_gyro.getAngle();
+  }
+
+  public void resetDrive() {
+    resetAngle();
+    resetEncoders();
+  }
+
+  private void resetAngle() {
+    m_gyro.reset();
+  }
+
+  private double getLeftEncoder() {
+    return m_leftEncoder1.getPosition() * DriveConstants.kENCODER_DISTANCE_PER_PULSE_M;
+  }
+
+  private double getRightEncoder() {
+    return m_rightEncoder1.getPosition() * DriveConstants.kENCODER_DISTANCE_PER_PULSE_M;
+  }
+
+  private void resetEncoders() {
+    m_leftEncoder1.setPosition(0);
+    m_rightEncoder1.setPosition(0);
   }
 }

@@ -8,12 +8,12 @@
     # each side of the drive) are *with respect to their master*.  This is
     # different from the other poject types!
     # Inversions for the left-side motors
-    "leftMotorsInverted": [True, True],
+    "leftMotorsInverted": [True,False],
     # Inversions for the right side motors
-    "rightMotorsInverted": [True, True],
+    "rightMotorsInverted": [True,False],
     # The total gear reduction between the motor and the wheels, expressed as
     # a fraction [motor turns]/[wheel turns]
-    "gearing": 17.857/1,
+    "gearing": 17.857,
     # Wheel diameter (in units of your choice - will dictate units of analysis)
     "wheelDiameter": 0.20066,
     # Your gyro type (one of "NavX", "Pigeon", "ADXRS450", "AnalogGyro", or "None")
@@ -28,5 +28,8 @@
     # "" (NavX using default SPI, ADXRS450 using onboard CS0, or no gyro)
     "gyroPort": "",
 }
+
+
+
 
 

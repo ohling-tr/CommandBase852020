@@ -13,13 +13,17 @@ import frc.robot.Constants.DriveConstants;
 
 import java.net.CacheRequest;
 
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -37,10 +41,27 @@ public class DriveSubsystem extends SubsystemBase {
 
   private CANEncoder m_leftEncoder1;
   private CANEncoder m_rightEncoder1;
+  private double m_leftEncoderSign;
+  private double m_rightEncoderSign;
 
-  private ADXRS450_Gyro m_gyro;
+  private AHRS m_gyroK;
+
+  private final DifferentialDriveOdometry m_driveOdometry;
 
   public DriveSubsystem() {
+
+    /*
+       public static final double kGEARBOX_REDUCTION = (50.0/12.0) * (60.0/14.0);
+        public static final double kTIRE_SIZE_IN = 7.9;
+        public static final double kTIRE_SIZE_M = Units.inchesToMeters(kTIRE_SIZE_IN);
+        public static final int kPULSE_PER_ROTATION = 1;
+        //public static final double kENCODER_DISTANCE_PER_PULSE_M = ((double) kPULSE_PER_ROTATION / kGEARBOX_REDUCTION) * (kTIRE_SIZE_M * Math.PI);
+        public static final double kENCODER_DISTANCE_PER_PULSE_M = (k
+    */
+    System.out.format("Gearing.........: %f%n", DriveConstants.kGEARBOX_REDUCTION);
+    System.out.format("Tire M..........: %f%n", DriveConstants.kTIRE_SIZE_M);
+    System.out.format("PulseRot........: %d%n", DriveConstants.kPULSE_PER_ROTATION);
+    System.out.format("DistancePerPulse: %f%n", DriveConstants.kENCODER_DISTANCE_PER_PULSE_M);
 
     m_leftController1 = new CANSparkMax(DriveConstants.kLEFT_MOTOR_1_PORT, MotorType.kBrushless);
     m_leftController2 = new CANSparkMax(DriveConstants.kLEFT_MOTOR_2_PORT, MotorType.kBrushless);
@@ -69,32 +90,59 @@ public class DriveSubsystem extends SubsystemBase {
 
     m_leftControlGroup = new SpeedControllerGroup(m_leftController1, m_leftController2);
     m_rightControlGroup = new SpeedControllerGroup(m_rightController1, m_rightController2);
+    m_leftControlGroup.setInverted(DriveConstants.kIS_DRIVE_INVERTED);
+    m_rightControlGroup.setInverted(DriveConstants.kIS_DRIVE_INVERTED);
     m_diffDrive = new DifferentialDrive(m_leftControlGroup, m_rightControlGroup);
+    if (DriveConstants.kIS_DRIVE_INVERTED) {
+      m_leftEncoderSign = 1;
+      m_rightEncoderSign = -1;
+    } else {
+      m_leftEncoderSign = -1;
+      m_rightEncoderSign = 1;
+    }
+    
+    /*
+    m_leftController1.setInverted(DriveConstants.kIS_DRIVE_INVERTED);
+    m_rightController1.setInverted(DriveConstants.kIS_DRIVE_INVERTED);
+    m_diffDrive = new DifferentialDrive(m_leftController1, m_rightController1);
+    m_leftController2.follow(m_leftController1);
+    m_rightController2.follow(m_rightController1);
+    */
 
     m_leftEncoder1 = m_leftController1.getEncoder();
-    //m_leftEncoder1.setPositionConversionFactor(DriveConstants.kENCODER_DISTANCE_PER_PULSE_M);
     m_rightEncoder1 = m_rightController1.getEncoder();
-    //m_rightEncoder1.setPositionConversionFactor(DriveConstants.kENCODER_DISTANCE_PER_PULSE_M);
     resetEncoders();
     
-    m_gyro = new ADXRS450_Gyro();
+    m_gyroK = new AHRS(SerialPort.Port.kMXP);
+
+    m_driveOdometry = new DifferentialDriveOdometry(getRotation2dK());
+    
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Gyro....:", getAngle());
-    SmartDashboard.putNumber("LeftEncdr:", getLeftEncoder());
-    SmartDashboard.putNumber("RightEncdr:", getRightEncoder());
+    m_driveOdometry.update(getRotation2dK(), getLeftDistance(), getRightDistance());
+    SmartDashboard.putNumber("GyroK", getAngleK());
+    SmartDashboard.putNumber("LeftEncdr:", getLeftDistance());
+    SmartDashboard.putNumber("RightEncdr:", getRightDistance());
+    SmartDashboard.putNumber("Odo Y" , m_driveOdometry.getPoseMeters().getTranslation().getY());
+    SmartDashboard.putNumber("Odo X", m_driveOdometry.getPoseMeters().getTranslation().getX());
+    SmartDashboard.putNumber("Odo Deg", m_driveOdometry.getPoseMeters().getRotation().getDegrees());
   }
 
   public void arcadeDrive(final double velocity, final double heading) {
-    final double dDriveInvert = -1;
-    m_diffDrive.arcadeDrive(velocity * dDriveInvert, heading);
+    m_diffDrive.arcadeDrive(velocity, heading);
   }
 
-  private double getAngle() {
-    return m_gyro.getAngle();
+  private double getAngleK() {
+    return m_gyroK.getAngle();
+  }
+
+  private Rotation2d getRotation2dK() {
+    // note the negation of the angle is required because the wpilib convention
+    // uses left positive rotation while gyros read right positive
+    return Rotation2d.fromDegrees(-getAngleK());
   }
 
   public void resetDrive() {
@@ -103,15 +151,16 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   private void resetAngle() {
-    m_gyro.reset();
+    m_gyroK.zeroYaw();
+    // need to add reset of odometry and encoders
   }
 
-  private double getLeftEncoder() {
-    return m_leftEncoder1.getPosition() * DriveConstants.kENCODER_DISTANCE_PER_PULSE_M;
+  private double getLeftDistance() {
+    return m_leftEncoderSign * m_leftEncoder1.getPosition() * DriveConstants.kENCODER_DISTANCE_PER_PULSE_M;
   }
 
-  private double getRightEncoder() {
-    return m_rightEncoder1.getPosition() * DriveConstants.kENCODER_DISTANCE_PER_PULSE_M;
+  private double getRightDistance() {
+    return m_rightEncoderSign * m_rightEncoder1.getPosition() * DriveConstants.kENCODER_DISTANCE_PER_PULSE_M;
   }
 
   private void resetEncoders() {

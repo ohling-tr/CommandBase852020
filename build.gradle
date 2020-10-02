@@ -37,6 +37,12 @@ deploy {
     }
 }
 
+//adding for cansparkmax simulation
+//repositories {
+//  maven { url 'https://jitpack.io' }
+//}
+//end cansparkmax sim
+
 // Set this to true to enable desktop support.
 def includeDesktopSupport = false
 
@@ -51,6 +57,9 @@ dependencies {
     implementation wpi.deps.vendor.java()
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
+
+    //cansparkmax sim
+    //implementation "net.thefletcher:SparkMaxSim-java:1.5.1"
 
     testImplementation 'junit:junit:4.12'
 

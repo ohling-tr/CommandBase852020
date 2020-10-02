@@ -19,10 +19,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
@@ -116,6 +115,9 @@ public class DriveSubsystem extends SubsystemBase {
     m_gyroK = new AHRS(SerialPort.Port.kMXP);
 
     m_driveOdometry = new DifferentialDriveOdometry(getRotation2dK());
+
+    SendableRegistry.addLW(m_diffDrive, "Drive Base");
+    SendableRegistry.addLW(m_gyroK, "NavX");
     
   }
 

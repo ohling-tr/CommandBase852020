@@ -46,4 +46,21 @@ public final class Constants {
         public static final DifferentialDriveKinematics K_DRIVE_KINEMATICS = new DifferentialDriveKinematics(kTRACK_WIDTH_M);
 
     }
+
+    public static final class VisionConstants {
+        public static final int kSERVO_SHOOTER_ANGLE = 0;
+        public static final int kSERVO_DOWN_ANGLE = 0;
+        public static final int kSERVO_UP_ANGLE = 90;
+        public static final int kLIGHT_RELAY_PORT = 0;
+
+        public static final String kVISION_TABLE_KEY = "Vision";
+        public static final String kIS_LOADING_STATION_ALIGNED_KEY = "isLoadingStationAligned";
+        public static final String kIS_HIGH_GOAL_ALIGNED_KEY = "isHighGoalAligned";
+        public static final String kIS_VISION_ON_KEY = "isVisionOn";
+        public static final String kVISION_OFFSET_KEY = "highGoalOffset";
+        public static final String kVISION_DISTANCE_KEY = "highGoalDistance";
+
+        public static final String kVISION_TAB_KEY = "Vision Table";
+
+    }
 }

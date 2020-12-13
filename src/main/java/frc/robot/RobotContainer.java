@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.JoystickButtons;
-import frc.robot.commands.ArcadeDrive;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveSubsystem m_drive = new DriveSubsystem();
+  private final Vision m_vision = new Vision();
 
   private final Joystick m_driveStick = new Joystick(0);
 
@@ -56,6 +57,9 @@ public class RobotContainer {
     new JoystickButton(m_driveStick, JoystickButtons.kRESET_DRIVE)
       .whenPressed(() -> m_drive.resetDrive());
       
+    new JoystickButton(m_driveStick, JoystickButtons.kVISION_ON)
+      .whileHeld(
+      new VisionLightOn(m_vision));
   }
 
 

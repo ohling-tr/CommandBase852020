@@ -27,7 +27,8 @@ public class Vision extends SubsystemBase {
   private NetworkTable m_visionTable;
   private Servo m_camera0Servo;
   private boolean m_bIsLightOn;
-  private boolean m_bIsVisionOn;
+  private boolean m_bIsFwdVisionOn;
+  private boolean m_bIsRevVisionOn;
 
   private Relay m_cameraLightRelay;
 
@@ -36,7 +37,8 @@ public class Vision extends SubsystemBase {
 
   private NetworkTableEntry m_vLoadingStationAligned;
   private NetworkTableEntry m_vHighGoalAligned;
-  private NetworkTableEntry m_vVisionOn;
+  private NetworkTableEntry m_vFwdVisionOn;
+  private NetworkTableEntry m_vRevVisionOn;
   private NetworkTableEntry m_vHighGoalOffset;
   private NetworkTableEntry m_vHighGoalDistance;
 
@@ -46,11 +48,14 @@ public class Vision extends SubsystemBase {
     m_visionTable = NetworkTableInstance.getDefault().getTable(VisionConstants.kVISION_TABLE_KEY);
     m_camera0Servo = new Servo(0);
     m_bIsLightOn = false;
-    m_bIsVisionOn = false;
+    m_bIsFwdVisionOn = false;
+    m_bIsRevVisionOn = false;
 
     m_vLoadingStationAligned = m_visionTable.getEntry(VisionConstants.kIS_LOADING_STATION_ALIGNED_KEY);
     m_vHighGoalAligned = m_visionTable.getEntry(VisionConstants.kIS_HIGH_GOAL_ALIGNED_KEY);
-    m_vVisionOn = m_visionTable.getEntry(VisionConstants.kIS_VISION_ON_KEY);
+    m_vFwdVisionOn = m_visionTable.getEntry(VisionConstants.kIS_FWD_VISION_ON_KEY);
+    m_vRevVisionOn = m_visionTable.getEntry(VisionConstants.kIS_REV_VISION_ON_KEY);
+
     m_vHighGoalOffset = m_visionTable.getEntry(VisionConstants.kVISION_OFFSET_KEY);
     m_vHighGoalDistance = m_visionTable.getEntry(VisionConstants.kVISION_DISTANCE_KEY);
 
@@ -71,7 +76,8 @@ public class Vision extends SubsystemBase {
     m_bIsLoadingStationAligned = m_vLoadingStationAligned.getBoolean(false);
     m_bIsHighGoalAligned = m_vHighGoalAligned.getBoolean(false);
 
-    m_vVisionOn.setBoolean(m_bIsVisionOn);
+    m_vFwdVisionOn.setBoolean(m_bIsFwdVisionOn);
+    m_vRevVisionOn.setBoolean(m_bIsRevVisionOn);
 
     /*
     SmartDashboard.putNumber("Servo Angle", m_camera0Servo.getAngle());
@@ -97,11 +103,11 @@ public class Vision extends SubsystemBase {
   }
 
   public void setVisionOn(){
-    m_bIsVisionOn = true;
+    m_bIsRevVisionOn = true;
   }
 
   public void setVisionOff(){
-    m_bIsVisionOn = false;
+    m_bIsRevVisionOn = false;
   }
 
   public void setLightRelayOn(){

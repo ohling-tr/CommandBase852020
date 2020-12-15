@@ -57,7 +57,8 @@ public final class Constants {
         public static final String kVISION_TABLE_KEY = "Vision";
         public static final String kIS_LOADING_STATION_ALIGNED_KEY = "isLoadingStationAligned";
         public static final String kIS_HIGH_GOAL_ALIGNED_KEY = "isHighGoalAligned";
-        public static final String kIS_VISION_ON_KEY = "isVisionOn";
+        public static final String kIS_FWD_VISION_ON_KEY = "isFwdVisionOn";
+        public static final String kIS_REV_VISION_ON_KEY = "isRevVisionOn";
         public static final String kVISION_OFFSET_KEY = "highGoalOffset";
         public static final String kVISION_DISTANCE_KEY = "highGoalDistance";
 

@@ -109,12 +109,12 @@ public class Vision extends SubsystemBase {
 
   public void setFwdVisionOn(){
     m_bIsFwdVisionOn = true;
-    m_vFwdVisionOn.setBoolean(m_bIsRevVisionOn);
+    m_vFwdVisionOn.setBoolean(m_bIsFwdVisionOn);
   }
 
   public void setFwdVisionOff(){
     m_bIsFwdVisionOn = false;
-    m_vFwdVisionOn.setBoolean(m_bIsRevVisionOn);
+    m_vFwdVisionOn.setBoolean(m_bIsFwdVisionOn);
   }
 
   public void setRevVisionOn(){

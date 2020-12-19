@@ -56,10 +56,12 @@ public class RobotContainer {
 
     new JoystickButton(m_driveStick, JoystickButtons.kRESET_DRIVE)
       .whenPressed(() -> m_drive.resetDrive());
-      
-    new JoystickButton(m_driveStick, JoystickButtons.kVISION_ON)
-      .whileHeld(
-      new VisionLightOn(m_vision));
+    
+    new JoystickButton(m_driveStick, JoystickButtons.kFWD_VISION_ON)
+      .whileHeld(new FwdVisionLightOn(m_vision));
+  
+    new JoystickButton(m_driveStick, JoystickButtons.kREV_VISION_ON)
+      .whileHeld(new RevVisionLightOn(m_vision));
   }
 
 

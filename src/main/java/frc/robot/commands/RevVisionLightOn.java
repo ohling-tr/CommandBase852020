@@ -10,13 +10,13 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Vision;
 
-public class VisionLightOn extends CommandBase {
+public class RevVisionLightOn extends CommandBase {
   /**
    * Creates a new VisionLightOn.
    */
   private Vision m_vision;
 
-  public VisionLightOn(Vision vision) {
+  public RevVisionLightOn(Vision vision) {
     addRequirements(vision);
     m_vision = vision;
   }
@@ -24,7 +24,7 @@ public class VisionLightOn extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_vision.setVisionOn();
+    m_vision.setRevVisionOn();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -35,7 +35,7 @@ public class VisionLightOn extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_vision.setVisionOff();
+    m_vision.setRevVisionOff();
   }
 
   // Returns true when the command should end.

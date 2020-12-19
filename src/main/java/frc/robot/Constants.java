@@ -22,7 +22,8 @@ public final class Constants {
 
     public static final class JoystickButtons {
         public static final int kRESET_DRIVE = 8;
-        public static final int kVISION_ON = 2;
+        public static final int kFWD_VISION_ON = 3;
+        public static final int kREV_VISION_ON = 2;
     }
 
     public static final class DriveConstants {

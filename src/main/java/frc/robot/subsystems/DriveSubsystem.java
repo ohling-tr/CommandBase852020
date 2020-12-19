@@ -42,6 +42,7 @@ public class DriveSubsystem extends SubsystemBase {
   private CANEncoder m_rightEncoder1;
   private double m_leftEncoderSign;
   private double m_rightEncoderSign;
+  private double m_headingSign;
 
   private AHRS m_gyroK;
 
@@ -92,21 +93,26 @@ public class DriveSubsystem extends SubsystemBase {
     m_leftControlGroup.setInverted(DriveConstants.kIS_DRIVE_INVERTED);
     m_rightControlGroup.setInverted(DriveConstants.kIS_DRIVE_INVERTED);
     m_diffDrive = new DifferentialDrive(m_leftControlGroup, m_rightControlGroup);
-    if (DriveConstants.kIS_DRIVE_INVERTED) {
-      m_leftEncoderSign = 1;
-      m_rightEncoderSign = -1;
-    } else {
-      m_leftEncoderSign = -1;
-      m_rightEncoderSign = 1;
-    }
     
     /*
     m_leftController1.setInverted(DriveConstants.kIS_DRIVE_INVERTED);
-    m_rightController1.setInverted(DriveConstants.kIS_DRIVE_INVERTED);
+    m_rightController1.setInverted(!DriveConstants.kIS_DRIVE_INVERTED);
     m_diffDrive = new DifferentialDrive(m_leftController1, m_rightController1);
     m_leftController2.follow(m_leftController1);
     m_rightController2.follow(m_rightController1);
     */
+    
+    if (DriveConstants.kIS_DRIVE_INVERTED) {
+      m_leftEncoderSign = 1;
+      m_rightEncoderSign = -1;
+      m_headingSign = -1;
+    } else {
+      m_leftEncoderSign = -1;
+      m_rightEncoderSign = 1;
+      m_headingSign = 1;
+    }
+    
+
 
     m_leftEncoder1 = m_leftController1.getEncoder();
     m_rightEncoder1 = m_rightController1.getEncoder();
@@ -134,7 +140,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void arcadeDrive(final double velocity, final double heading) {
-    m_diffDrive.arcadeDrive(velocity, heading);
+    m_diffDrive.arcadeDrive(velocity, m_headingSign * heading);
   }
 
   private double getAngleK() {

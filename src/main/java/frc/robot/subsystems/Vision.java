@@ -55,12 +55,17 @@ public class Vision extends SubsystemBase {
     m_vHighGoalAligned = m_visionTable.getEntry(VisionConstants.kIS_HIGH_GOAL_ALIGNED_KEY);
     m_vFwdVisionOn = m_visionTable.getEntry(VisionConstants.kIS_FWD_VISION_ON_KEY);
     m_vRevVisionOn = m_visionTable.getEntry(VisionConstants.kIS_REV_VISION_ON_KEY);
-
     m_vHighGoalOffset = m_visionTable.getEntry(VisionConstants.kVISION_OFFSET_KEY);
     m_vHighGoalDistance = m_visionTable.getEntry(VisionConstants.kVISION_DISTANCE_KEY);
 
-    m_visionTab = Shuffleboard.getTab(VisionConstants.kVISION_TAB_KEY);
+    m_vLoadingStationAligned.setBoolean(false);
+    m_vHighGoalAligned.setBoolean(false);
+    m_vFwdVisionOn.setBoolean(false);
+    m_vRevVisionOn.setBoolean(false);
+    m_vHighGoalOffset.setNumber(0);
+    m_vHighGoalDistance.setNumber(0);
 
+    m_visionTab = Shuffleboard.getTab(VisionConstants.kVISION_TAB_KEY);
     m_visionTab.addNumber("Servo Angle", () -> m_camera0Servo.getAngle());
     m_visionTab.addBoolean("Is Loading Station Aligned", () -> m_bIsLoadingStationAligned);
     m_visionTab.addBoolean("Is High Goal Aligned", () -> m_bIsHighGoalAligned);
@@ -76,8 +81,8 @@ public class Vision extends SubsystemBase {
     m_bIsLoadingStationAligned = m_vLoadingStationAligned.getBoolean(false);
     m_bIsHighGoalAligned = m_vHighGoalAligned.getBoolean(false);
 
-    m_vFwdVisionOn.setBoolean(m_bIsFwdVisionOn);
-    m_vRevVisionOn.setBoolean(m_bIsRevVisionOn);
+    //m_vFwdVisionOn.setBoolean(m_bIsFwdVisionOn);
+    //m_vRevVisionOn.setBoolean(m_bIsRevVisionOn);
 
     /*
     SmartDashboard.putNumber("Servo Angle", m_camera0Servo.getAngle());
@@ -102,12 +107,24 @@ public class Vision extends SubsystemBase {
     setAngle(VisionConstants.kSERVO_UP_ANGLE);
   }
 
-  public void setVisionOn(){
-    m_bIsRevVisionOn = true;
+  public void setFwdVisionOn(){
+    m_bIsFwdVisionOn = true;
+    m_vFwdVisionOn.setBoolean(m_bIsRevVisionOn);
   }
 
-  public void setVisionOff(){
+  public void setFwdVisionOff(){
+    m_bIsFwdVisionOn = false;
+    m_vFwdVisionOn.setBoolean(m_bIsRevVisionOn);
+  }
+
+  public void setRevVisionOn(){
+    m_bIsRevVisionOn = true;
+    m_vRevVisionOn.setBoolean(m_bIsRevVisionOn);
+  }
+
+  public void setRevVisionOff(){
     m_bIsRevVisionOn = false;
+    m_vRevVisionOn.setBoolean(m_bIsRevVisionOn);
   }
 
   public void setLightRelayOn(){

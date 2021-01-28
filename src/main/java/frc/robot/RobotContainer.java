@@ -28,6 +28,7 @@ public class RobotContainer {
   private final Vision m_vision = new Vision();
 
   private final Joystick m_driveStick = new Joystick(0);
+  private final Joystick m_console = new Joystick(1);
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -41,7 +42,8 @@ public class RobotContainer {
         m_drive,
         () -> m_driveStick.getY(),
         () -> m_driveStick.getTwist(),
-        () -> m_driveStick.getThrottle()
+        () -> m_driveStick.getThrottle(),
+        () -> m_console.getX()
       )
     );
   }
